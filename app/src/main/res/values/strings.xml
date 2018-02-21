@@ -1,0 +1,35 @@
+<resources>
+    <!-- Titles -->
+    <string name="app_name">Creitive</string>
+    <string name="activity_login_title">Creitive - Log in</string>
+    <string name="activity_main_title">Blog posts</string>
+    <string name="activity_blog_title">Viewing post</string>
+
+    <!-- General -->
+    <string name="placeholder">Placeholder</string>
+
+    <!-- Keys -->
+    <string name="shared_preferences_key">12345</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_login_failed">Login failed. Check your credentials.</string>
+
+    <!-- Strings related to blog -->
+    <string name="error_blog_load">Unable to load blog content. :(</string>
+    
+    <!-- Notice dialog -->
+    <string name="button_ok">OK</string>
+
+    <!-- String related to main -->
+    <string name="token_expired">Login token expired</string>
+    <string name="token_expired_desc">Your login token has expired. Please login again to use the service.</string>
+    <string name="retry_blog">Retry</string>
+
+</resources>
