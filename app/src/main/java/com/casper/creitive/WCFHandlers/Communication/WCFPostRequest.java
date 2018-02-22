@@ -2,7 +2,7 @@ package com.casper.creitive.WCFHandlers.Communication;
 
 import android.os.AsyncTask;
 
-import com.casper.creitive.WCFHandlers.User.UserProfile;
+import com.casper.creitive.User.UserProfile;
 
 import java.io.BufferedReader;
 import java.io.IOException;

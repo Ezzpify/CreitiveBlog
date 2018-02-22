@@ -2,13 +2,11 @@ package com.casper.creitive.WCFHandlers.Communication;
 
 import android.os.AsyncTask;
 
-import com.casper.creitive.WCFHandlers.User.UserProfile;
+import com.casper.creitive.User.UserProfile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 

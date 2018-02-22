@@ -32,4 +32,8 @@
     <string name="token_expired_desc">Your login token has expired. Please login again to use the service.</string>
     <string name="retry_blog">Retry</string>
 
+    <!-- General -->
+    <string name="error_no_network">No network</string>
+    <string name="error_no_network_desc">Network is not available. Please enable internet and retry.</string>
+
 </resources>

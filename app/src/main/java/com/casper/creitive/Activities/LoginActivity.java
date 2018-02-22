@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatDelegate;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,12 +17,14 @@ import android.widget.TextView;
 
 import com.casper.creitive.Dialogs.NoticeDialog;
 import com.casper.creitive.R;
+import com.casper.creitive.Tasks.Tasks;
+import com.casper.creitive.Utils.NetworkStatus;
 import com.casper.creitive.Utils.Utils;
 import com.casper.creitive.WCFHandlers.Communication.WCFHandler;
 import com.casper.creitive.WCFHandlers.Communication.WCFResponse;
 import com.casper.creitive.WCFHandlers.DataClasses.LoginDataHolder;
-import com.casper.creitive.WCFHandlers.User.UserProfile;
-import com.casper.creitive.WCFHandlers.User.UserSerializable;
+import com.casper.creitive.User.UserProfile;
+import com.casper.creitive.User.UserSerializable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +43,7 @@ public class LoginActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         _userSer = new UserSerializable(LoginActivity.this);
+        _userSer.accessToken = "";
 
         _loginFormView = findViewById(R.id.login_form);
         _progressView = findViewById(R.id.login_progress);
@@ -83,6 +85,13 @@ public class LoginActivity extends AppCompatActivity
 
     private void checkLoginCredentials()
     {
+        if (!NetworkStatus.getInstance().hasNetwork(LoginActivity.this))
+        {
+            NoticeDialog nd = new NoticeDialog(LoginActivity.this, getString(R.string.error_no_network), getString(R.string.error_no_network_desc));
+            nd.show();
+            return;
+        }
+
         _emailView.setError(null);
         _passwordView.setError(null);
 

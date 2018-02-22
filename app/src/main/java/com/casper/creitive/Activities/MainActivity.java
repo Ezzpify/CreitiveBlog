@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -14,10 +15,11 @@ import android.widget.ProgressBar;
 import com.casper.creitive.Adapters.BlogItemAdapter;
 import com.casper.creitive.Dialogs.NoticeDialog;
 import com.casper.creitive.R;
+import com.casper.creitive.Utils.NetworkStatus;
 import com.casper.creitive.WCFHandlers.Communication.WCFHandler;
 import com.casper.creitive.WCFHandlers.Communication.WCFResponse;
 import com.casper.creitive.WCFHandlers.DataClasses.BlogPostHolder;
-import com.casper.creitive.WCFHandlers.User.UserSerializable;
+import com.casper.creitive.User.UserSerializable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                _loadingProgress.setVisibility(View.VISIBLE);
                 _retryButton.setVisibility(View.GONE);
                 fetchBlogPosts();
             }
@@ -66,74 +69,85 @@ public class MainActivity extends AppCompatActivity
 
     private void fetchBlogPosts()
     {
-        _blogPosts = new ArrayList<>();
-        WCFHandler.getInstance().sendGetRequest(new WCFResponse()
+        if (!NetworkStatus.getInstance().hasNetwork(MainActivity.this))
         {
-            @Override
-            public void getResponse(String response)
+            NoticeDialog nd = new NoticeDialog(MainActivity.this, getString(R.string.error_no_network), getString(R.string.error_no_network_desc));
+            nd.show();
+
+            _loadingProgress.setVisibility(View.GONE);
+            _retryButton.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            _blogPosts = new ArrayList<>();
+            WCFHandler.getInstance().sendGetRequest(new WCFResponse()
             {
-                try
+                @Override
+                public void getResponse(String response)
                 {
-                    JSONArray jsonArray = new JSONArray(response);
-                    for (int i = 0; i < jsonArray.length(); i++)
-                        _blogPosts.add(new BlogPostHolder().deserializeData(jsonArray.getJSONObject(i)));
+                    try
+                    {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); i++)
+                            _blogPosts.add(new BlogPostHolder().deserializeData(jsonArray.getJSONObject(i)));
 
-                    ((BlogItemAdapter)_recyclerView.getAdapter()).setItems(_blogPosts);
+                        ((BlogItemAdapter)_recyclerView.getAdapter()).setItems(_blogPosts);
 
+                        runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                _recyclerView.setVisibility(View.VISIBLE);
+                                _loadingProgress.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+                    catch (JSONException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onError(String response, final int code)
+                {
                     runOnUiThread(new Runnable()
                     {
                         @Override
                         public void run()
                         {
-                            _recyclerView.setVisibility(View.VISIBLE);
-                            _loadingProgress.setVisibility(View.GONE);
+                            switch (code)
+                            {
+                                //Unauthorized - Go back to login blyat
+                                case 401:
+                                    _userSer.accessToken = "";
+                                    _userSer.saveValues();
+
+                                    NoticeDialog nd = new NoticeDialog(MainActivity.this, getString(R.string.token_expired), getString(R.string.token_expired_desc));
+                                    nd.setOnDismissListener(new DialogInterface.OnDismissListener()
+                                    {
+                                        @Override
+                                        public void onDismiss(DialogInterface dialogInterface)
+                                        {
+                                            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                                            startActivity(loginIntent);
+                                            finish();
+                                        }
+                                    });
+                                    nd.show();
+                                    break;
+
+                                //Waduhek
+                                default:
+                                    _loadingProgress.setVisibility(View.GONE);
+                                    _retryButton.setVisibility(View.VISIBLE);
+                                    break;
+                            }
                         }
                     });
                 }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(String response, final int code)
-            {
-                runOnUiThread(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        switch (code)
-                        {
-                            //Unauthorized - Go back to login blyat
-                            case 401:
-                                _userSer.accessToken = "";
-                                _userSer.saveValues();
-
-                                NoticeDialog nd = new NoticeDialog(MainActivity.this, getString(R.string.token_expired), getString(R.string.token_expired_desc));
-                                nd.setOnDismissListener(new DialogInterface.OnDismissListener()
-                                {
-                                    @Override
-                                    public void onDismiss(DialogInterface dialogInterface)
-                                    {
-                                        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                                        startActivity(loginIntent);
-                                        finish();
-                                    }
-                                });
-                                nd.show();
-                                break;
-
-                            //Waduhek
-                            default:
-                                _loadingProgress.setVisibility(View.GONE);
-                                _retryButton.setVisibility(View.VISIBLE);
-                                break;
-                        }
-                    }
-                });
-            }
-        }, "blogs");
+            }, "blogs");
+        }
     }
 }
