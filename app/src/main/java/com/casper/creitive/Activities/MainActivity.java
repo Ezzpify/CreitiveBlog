@@ -127,15 +127,8 @@ public class MainActivity extends AppCompatActivity
 
                             //Waduhek
                             default:
-                                runOnUiThread(new Runnable()
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        _loadingProgress.setVisibility(View.GONE);
-                                        _retryButton.setVisibility(View.VISIBLE);
-                                    }
-                                });
+                                _loadingProgress.setVisibility(View.GONE);
+                                _retryButton.setVisibility(View.VISIBLE);
                                 break;
                         }
                     }

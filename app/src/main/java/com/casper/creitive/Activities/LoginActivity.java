@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity
         }
         else
         {
+            UserProfile.accessToken = _userSer.accessToken;
             startNextActivity();
         }
     }
