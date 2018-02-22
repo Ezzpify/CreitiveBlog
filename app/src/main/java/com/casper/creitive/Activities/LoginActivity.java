@@ -95,10 +95,8 @@ public class LoginActivity extends AppCompatActivity
         _emailView.setError(null);
         _passwordView.setError(null);
 
-        //String email = _emailView.getText().toString().trim();
-        //String password = _passwordView.getText().toString().trim();
-        String email = "candidate@creitive.com";
-        String password = "1234567";
+        String email = _emailView.getText().toString().trim();
+        String password = _passwordView.getText().toString().trim();
 
         boolean cancel = false;
         View focusView = null;
