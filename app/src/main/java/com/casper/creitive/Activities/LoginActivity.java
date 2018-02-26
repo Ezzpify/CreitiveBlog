@@ -43,7 +43,6 @@ public class LoginActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         _userSer = new UserSerializable(LoginActivity.this);
-        _userSer.accessToken = "";
 
         _loginFormView = findViewById(R.id.login_form);
         _progressView = findViewById(R.id.login_progress);
